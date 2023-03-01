@@ -1,6 +1,6 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, \
-    QFrame, QComboBox, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QLabel, \
-        QGridLayout, QRadioButton
+from PyQt6.QtWidgets import *
+from PyQt6.QtCore import *
+from random import randint
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -15,6 +15,7 @@ class MainWindow(QMainWindow):
         self.cohortComboBox = None
         self.filterComboBox = None
         self.searchStudentLineEdit = None
+        self.searchCompleter = None
         self.importDataButton = None
         self.usernameLabel = None
 
@@ -24,10 +25,15 @@ class MainWindow(QMainWindow):
         self.heatmapLabel = None
         self.heatmapHBoxLayout = None
         self.heatmapVBoxLayout = None
+
         self.courseFrame = None
         self.courseLabel = None
         self.courseHBoxLayout = None
         self.courseVBoxLayout = None
+        self.courseScrollArea = None
+        self.courseWidget = None
+        self.courseWidgetLayout = None
+
         self.studentFrame = None
         self.studentHeaderLayout = None
         self.studentLabel = None
@@ -35,12 +41,28 @@ class MainWindow(QMainWindow):
         self.studentLineEdit = None
         self.studentHBoxLayout = None
         self.studentVBoxLayout = None
+        self.studentScrollArea = None
+        self.studentWidget = None
+        self.studentWidgetLayout = None
+
+        self.students = ["12345678", "12341234", "11111111", "12121212", "87654321", "22446688", "11335577"]
+        self.courses = []
+
+        for i in range(25):
+            self.courses.append("course_"+str(i+1))
+
+        while len(self.students) < 50:
+            id = str(randint(10**7, (10**8)-1))
+            if id not in self.students:
+                self.students.append(id)
+
 
         self.setupUI()
     
     def setupUI(self):
         self.mainWidget = QWidget()
         self.mainWidget.setMinimumSize(640,500)
+        self.setWindowTitle("Early Interventions")
 
         self.cohortComboBox = QComboBox()
         self.cohortComboBox.addItems(["Cohort 2022", "Cohort 2021", "Cohort 2020"])
@@ -52,6 +74,11 @@ class MainWindow(QMainWindow):
 
         self.searchStudentLineEdit = QLineEdit()
         self.searchStudentLineEdit.setPlaceholderText("Search by StudentID")
+
+        self.searchCompleter = QCompleter(self.students)
+        self.searchCompleter.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+
+        self.searchStudentLineEdit.setCompleter(self.searchCompleter)
 
         self.importDataButton = QPushButton("Import Data")
         
@@ -96,7 +123,19 @@ class MainWindow(QMainWindow):
         self.courseHBoxLayout.addStretch()
         self.courseVBoxLayout = QVBoxLayout()
         self.courseVBoxLayout.addLayout(self.courseHBoxLayout)
-        self.courseVBoxLayout.addStretch()
+        self.courseScrollArea = QScrollArea()
+        self.courseScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.courseScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.courseScrollArea.setFrameShape(QFrame.Shape.NoFrame)
+        self.courseWidget = QWidget()
+        self.courseWidgetLayout = QVBoxLayout()
+        self.courseWidgetLayout.setContentsMargins(1, 1, 1, 1)
+        for c in self.courses:
+            self.courseWidgetLayout.addWidget(QLabel(c))
+        self.courseWidget.setLayout(self.courseWidgetLayout)
+        self.courseScrollArea.setWidget(self.courseWidget)
+        self.courseVBoxLayout.addWidget(self.courseScrollArea)
+        self.courseVBoxLayout.setContentsMargins(5, 5, 0, 5)
         self.courseFrame.setLayout(self.courseVBoxLayout)
 
         self.bodyGridLayout.addWidget(self.courseFrame, 0, 1)
@@ -108,6 +147,7 @@ class MainWindow(QMainWindow):
         self.studentLabel = QLabel("Students Performance")
         self.studentHBoxLayout = QHBoxLayout()
         self.studentHBoxLayout.addWidget(self.studentLabel)
+        self.studentHBoxLayout.setContentsMargins(0, 0, 5, 0)
         self.studentRadioButton = QRadioButton()
         self.studentRadioButton.setText("Most Severe")
         self.studentHBoxLayout.addWidget(self.studentRadioButton)
@@ -117,6 +157,20 @@ class MainWindow(QMainWindow):
         self.studentVBoxLayout = QVBoxLayout()
         self.studentVBoxLayout.addLayout(self.studentHBoxLayout)
         self.studentVBoxLayout.addStretch()
+
+        self.studentScrollArea = QScrollArea()
+        self.studentScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.studentScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.studentScrollArea.setFrameShape(QFrame.Shape.NoFrame)
+        self.studentWidget = QWidget()
+        self.studentWidgetLayout = QVBoxLayout()
+        self.studentWidgetLayout.setContentsMargins(1, 1, 1, 1)
+        for s in self.students:
+            self.studentWidgetLayout.addWidget(QLabel(s))
+        self.studentWidget.setLayout(self.studentWidgetLayout)
+        self.studentScrollArea.setWidget(self.studentWidget)
+        self.studentVBoxLayout.addWidget(self.studentScrollArea, 1)
+        self.studentVBoxLayout.setContentsMargins(5, 5, 0, 5)
         self.studentFrame.setLayout(self.studentVBoxLayout)
 
         self.bodyGridLayout.addWidget(self.studentFrame, 0, 2)
@@ -130,6 +184,7 @@ class MainWindow(QMainWindow):
         self.mainWidget.setLayout(self.mainLayout)
 
         self.setCentralWidget(self.mainWidget)
+
 
 
 if __name__ == '__main__':
