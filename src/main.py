@@ -1,6 +1,11 @@
+import matplotlib
+matplotlib.use('QtAgg')
+
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.figure import Figure
 from random import randint
 from StudentWindow import StudentWindow
 
@@ -28,6 +33,7 @@ class MainWindow(QMainWindow):
         self.heatmapLabel = None
         self.heatmapHBoxLayout = None
         self.heatmapVBoxLayout = None
+        self.heatmapFig = None
 
         self.courseFrame = None
         self.courseLabel = None
@@ -61,6 +67,7 @@ class MainWindow(QMainWindow):
 
         self.studentListWidget.itemClicked.connect(self.studentClicked)
         self.searchStudentLineEdit.returnPressed.connect(self.studentEntered)
+        self.cohortComboBox.currentTextChanged.connect(self.updateHeatmap)
     
     def setupUI(self):
         self.mainWidget = QWidget()
@@ -113,7 +120,10 @@ class MainWindow(QMainWindow):
         self.heatmapHBoxLayout.addStretch()
         self.heatmapVBoxLayout = QVBoxLayout()
         self.heatmapVBoxLayout.addLayout(self.heatmapHBoxLayout)
-        self.heatmapVBoxLayout.addStretch()
+
+        self.heatmapFig = HeatMap(self, width=5, height=4, dpi=100)
+        self.heatmapFig.axes.plot([0,1,2,3,4], [10,1,20,3,40])
+        self.heatmapVBoxLayout.addWidget(self.heatmapFig, 1)
         self.heatmapFrame.setLayout(self.heatmapVBoxLayout)
 
         self.dashboardSplitter.addWidget(self.heatmapFrame)
@@ -191,6 +201,26 @@ class MainWindow(QMainWindow):
         if s_id in self.students:
             studentWindow = StudentWindow(self, s_id)
             studentWindow.show()
+    
+    def updateHeatmap(self):
+        t = self.cohortComboBox.currentText()
+        self.heatmapLabel.setText(t + " Heatmap")
+        if t == "Cohort 2022":
+            self.heatmapFig.axes.cla()
+            self.heatmapFig.axes.plot([0,1,2,3,4], [10,1,20,3,40])
+        elif t == "Cohort 2021":
+            self.heatmapFig.axes.cla()
+            self.heatmapFig.axes.plot([0,1,2,3,4], [5,10,15,30,45])
+        if t == "Cohort 2020":
+            self.heatmapFig.axes.cla()
+            self.heatmapFig.axes.plot([0,1,2,3,4], [10,30,20,15,30])
+        self.heatmapFig.fig.canvas.draw()
+
+class HeatMap(FigureCanvasQTAgg):
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
+        self.fig = Figure(figsize=(width, height), dpi=dpi)
+        self.axes = self.fig.add_subplot(111)
+        super(HeatMap, self).__init__(self.fig)
 
 
 if __name__ == '__main__':
