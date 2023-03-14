@@ -10,12 +10,23 @@ class StudentWindow(QMainWindow):
         self.mainLayout = None
         self.studentID = studentID
         self.studentLabel = None
+        self.scoreLabel = None
+        self.levelLabel = None
+        self.confIntervalLabel = None
         self.studentScore = None
         self.tabWidget = None
         self.yearOneWidget = None
+        self.yearOneVBox = None
+        self.yearOneTopFive = None
         self.yearTwoWidget = None
+        self.yearTwoVBox = None
+        self.yearTwoTopFive = None
         self.yearThreeWidget = None
+        self.yearThreeVBox = None
+        self.yearThreeTopFive = None
         self.overallWidget = None
+        self.overallVBox = None
+        self.overallTopFive = None
 
         self.setupUI()
     
@@ -35,6 +46,16 @@ class StudentWindow(QMainWindow):
 
         self.mainLayout.addWidget(self.studentLabel)
 
+        self.levelLabel = QLabel("Year in Program: 2")
+        self.mainLayout.addWidget(self.levelLabel)
+
+        self.scoreLabel = QLabel("Predicted Score: 300")
+        self.mainLayout.addWidget(self.scoreLabel)
+
+        self.confIntervalLabel = QLabel("Confidence Interval: 85%")
+        self.mainLayout.addWidget(self.confIntervalLabel)
+
+
         self.tabWidget = QTabWidget()
         self.yearOneWidget = QWidget()
         self.yearTwoWidget = QWidget()
@@ -45,6 +66,36 @@ class StudentWindow(QMainWindow):
         self.tabWidget.addTab(self.yearOneWidget, "Year One")
         self.tabWidget.addTab(self.yearTwoWidget, "Year Two")
         self.tabWidget.addTab(self.yearThreeWidget, "Year Three")
+
+        self.overallTopFive = QLabel("Top 5 Predicitive Classes - Overall")
+        self.overallTopFive.setFont(font)
+        self.yearOneTopFive = QLabel("Top 5 Predicitive Classes - Year One")
+        self.yearOneTopFive.setFont(font)
+        self.yearTwoTopFive = QLabel("Top 5 Predicitive Classes - Year Two")
+        self.yearTwoTopFive.setFont(font)
+        self.yearThreeTopFive = QLabel("Top 5 Predicitive Classes - Year Three")
+        self.yearThreeTopFive.setFont(font)
+
+        self.overallVBox = QVBoxLayout()
+        self.yearOneVBox = QVBoxLayout()
+        self.yearTwoVBox = QVBoxLayout()
+        self.yearThreeVBox = QVBoxLayout()
+        
+        self.overallVBox.addWidget(self.overallTopFive)
+        self.overallVBox.addStretch()
+        self.overallWidget.setLayout(self.overallVBox)
+        
+        self.yearOneVBox.addWidget(self.yearOneTopFive)
+        self.yearOneVBox.addStretch()
+        self.yearOneWidget.setLayout(self.yearOneVBox)
+
+        self.yearTwoVBox.addWidget(self.yearTwoTopFive)
+        self.yearTwoVBox.addStretch()
+        self.yearTwoWidget.setLayout(self.yearTwoVBox)
+
+        self.yearThreeVBox.addWidget(self.yearThreeTopFive)
+        self.yearThreeVBox.addStretch()
+        self.yearThreeWidget.setLayout(self.yearThreeVBox)
 
         self.mainLayout.addWidget(self.tabWidget)
         self.mainWidget.setLayout(self.mainLayout)

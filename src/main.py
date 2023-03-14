@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use('QtAgg')
+matplotlib.use('Qt5Agg')
 
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
