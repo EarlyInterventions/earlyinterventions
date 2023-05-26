@@ -1,0 +1,21 @@
+If your Python application requires multiple external packages, you can use PyInstaller's --hidden-import option to include them in the stand-alone executable. Here's an 
+example of how you could do this:
+
+1. First, install PyInstaller using pip:
+pip install pyinstaller
+
+2. Next, navigate to the directory containing your Python files and run the following command:
+pyinstaller --onefile main.py
+This command tells PyInstaller to create a stand-alone executable of main.py, which is the entry point to your application. PyInstaller will automatically include any other 
+Python files that main.py imports.
+
+3. If your application has multiple external dependencies (e.g. packages that you've installed with pip), you can include them in the PyInstaller command using the 
+--hidden-import option. For example:
+pyinstaller --onefile --hidden-import package1 --hidden-import package2 main.py
+This command tells PyInstaller to include package1 and package2 in the executable, even though they're not directly imported by main.py.
+We'll need ldap3, sklearn, pyqt, pandas, MORE HERE?
+
+
+PyInstaller will create a new directory called dist, which will contain the executable file. The executable file will have the same name as your script, but with an .exe extension.
+Your application is now packaged as a stand-alone executable that can be downloaded and run on a Windows machine. Note that if your application has any data files or other 
+non-Python resources (e.g. images, configuration files),
