@@ -13,7 +13,6 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from matplotlib.lines import Line2D
 from matplotlib.figure import Figure
 from random import randint
-from StudentWindow import StudentWindow
 from Student import Student
 from ImportData import ImportData
 
@@ -73,7 +72,7 @@ class MainWindow(QMainWindow):
         self.setupUI()
 
         self.studentListWidget.itemClicked.connect(self.studentClicked)
-        self.searchStudentLineEdit.returnPressed.connect(self.studentEntered)
+        self.searchStudentLineEdit.textChanged.connect(self.studentEntered)
         self.filterComboBox.currentTextChanged.connect(self.filterCourses)
         self.cohortComboBox.currentTextChanged.connect(self.updateHeatmap)
         self.heatmapFig.mpl_connect("motion_notify_event", self.displayAnnotation)
@@ -252,10 +251,17 @@ class MainWindow(QMainWindow):
             self.on_click(None)
     
     def studentEntered(self):
-        s_id = self.searchStudentLineEdit.text()
-        if s_id in self.students.keys():
-            studentWindow = StudentWindow(self, s_id)
-            studentWindow.show()
+        text = self.searchStudentLineEdit.text()
+        if text:
+            for i in range(self.studentListWidget.count()):
+                if text in self.studentListWidget.item(i).text().split(":")[0]:
+                    self.studentListWidget.item(i).setHidden(False)
+                else:
+                    self.studentListWidget.item(i).setHidden(True)
+        else:
+            for i in range(self.studentListWidget.count()):
+                self.studentListWidget.item(i).setHidden(False)
+            
     
     def updateHeatmap(self):
         if self.sender() == self.cohortComboBox:
