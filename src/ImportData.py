@@ -73,29 +73,33 @@ class ImportData(QWidget):
         if list_widget:
             selected_items = list_widget.selectedItems()
             selected_values = [item.text() for item in selected_items]
-            
-            unique_courses = get_unique_values(clean_cohort_df, selected_values)
 
-            self.list_widget.hide()
-            self.submit_courses_button.hide()
-            
-            self.list_widget = QListWidget()
-            self.list_widget.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)  # Allow multiple selections
+            if (len(selected_values) == 0):
+                QMessageBox.critical(self, "Error", "No cohort years were selected. Please try again.")
 
-            self.submit_training_button = QPushButton("Submit")
-            self.submit_training_button.clicked.connect(lambda: self.upload_new_data(clean_cohort_df, selected_values, self.list_widget.selectedItems()))
+            else:         
+                unique_courses = get_unique_values(clean_cohort_df, selected_values)
 
-            self.select_all_button = QPushButton("Select All")
-            self.select_all_button.clicked.connect(lambda: self.select_all_items())
-            
-            for value in unique_courses:
-                item = QListWidgetItem(str(value))
-                self.list_widget.addItem(item)
+                self.list_widget.hide()
+                self.submit_courses_button.hide()
+                
+                self.list_widget = QListWidget()
+                self.list_widget.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)  # Allow multiple selections
 
-            self.layout.addWidget(self.list_widget)
-            self.layout.addWidget(self.submit_training_button)
-            self.layout.addWidget(self.select_all_button)
-            self.layout.addSpacing(40) 
+                self.submit_training_button = QPushButton("Submit")
+                self.submit_training_button.clicked.connect(lambda: self.upload_new_data(clean_cohort_df, selected_values, self.list_widget.selectedItems()))
+
+                self.select_all_button = QPushButton("Select All")
+                self.select_all_button.clicked.connect(lambda: self.select_all_items())
+                
+                for value in unique_courses:
+                    item = QListWidgetItem(str(value))
+                    self.list_widget.addItem(item)
+
+                self.layout.addWidget(self.list_widget)
+                self.layout.addWidget(self.submit_training_button)
+                self.layout.addWidget(self.select_all_button)
+                self.layout.addSpacing(40) 
     
     def select_all_items(self):
         for index in range(self.list_widget.count()):
@@ -105,19 +109,22 @@ class ImportData(QWidget):
     def upload_new_data(self, clean_cohort_df, selected_cohorts, selected_courses):
         selected_courses = [item.text() for item in selected_courses]
 
+        if (len(selected_courses) == 0):
+            QMessageBox.critical(self, "Error", "No courses were selected. Please try again.")
         
-        training_df = filter_training_dataframe(clean_cohort_df, selected_cohorts, selected_courses)
-        testing_df = create_test_dataframe(clean_cohort_df, selected_courses)
+        else:
+            training_df = filter_training_dataframe(clean_cohort_df, selected_cohorts, selected_courses)
+            testing_df = create_test_dataframe(clean_cohort_df, selected_courses)
 
-        X_train, y_train, X_test, ID_df, feature_names = create_model(training_df, testing_df)
-        fitted_model = fit_model(X_train, y_train)
-        logresults = predict_results(fitted_model, X_test, ID_df)
+            X_train, y_train, X_test, ID_df, feature_names = create_model(training_df, testing_df)
+            fitted_model = fit_model(X_train, y_train)
+            logresults = predict_results(fitted_model, X_test, ID_df)
 
-        feature_importance_df = get_feature_importance(fitted_model, feature_names)
+            feature_importance_df = get_feature_importance(fitted_model, feature_names)
 
-        QMessageBox.information(self, "Success", "Data uploated to database! This screen will now close.")
+            QMessageBox.information(self, "Success", "Data uploated to database! This screen will now close.")
 
-        self.close()
+            self.close()
 
 
 if __name__ == "__main__":
