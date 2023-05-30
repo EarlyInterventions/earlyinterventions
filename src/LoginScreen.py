@@ -51,7 +51,7 @@ class LoginScreen(QWidget):
         print("Is Standard User:", user.isStandardUser())
 
         if user.isAuthenticated():
-            if True:
+            if user.isAdmin():
                 self.show_main_window.emit()
                 self.set_username.emit(username)
             elif user.isStandardUser():
