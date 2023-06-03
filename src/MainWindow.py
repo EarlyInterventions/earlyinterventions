@@ -241,7 +241,7 @@ class MainWindow(QMainWindow):
         for v in sorted(graphDict.values()):
             if v == y:
                 self.annotation.xy = (x, y)
-                self.annotation.set_text("Student %s: \nPredicted Score: %f \nConfidence Interval: %.2f%%" % (key, y, 84.865))
+                self.annotation.set_text("Student %s: \nChance to Pass: %f \nConfidence Interval: %.2f%%" % (key, y, 84.865))
                 self.annotation.set_visible(True)
                 self.heatmapFig.fig.canvas.draw_idle()
                 break
